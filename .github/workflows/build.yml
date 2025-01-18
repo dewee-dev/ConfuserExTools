@@ -1,11 +1,12 @@
-name: Build
+name: Build Windows
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
+  workflow_dispatch:
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -13,6 +14,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
