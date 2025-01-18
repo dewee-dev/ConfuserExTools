@@ -20,6 +20,11 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x' # 根据项目需要调整 .NET SDK 版本
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 16.0 # Visual Studio 2019, which includes .NET Framework 4.5
 
     - name: Modify project files
       run: |
