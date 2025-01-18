@@ -31,7 +31,22 @@ jobs:
         foreach ($projectFile in $projectFiles) {
           $content = Get-Content $projectFile
           $content = $content -replace '<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>', '<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>'
+          $content = $content -replace '<TargetFramework>net35</TargetFramework>', '<TargetFramework>net45</TargetFramework>'
           Set-Content $projectFile -Value $content
+        }
+        
+        # 检查并修改 packages.config 文件
+        $packagesFiles = @(
+            "ConfuserExKiller\packages.config",
+            "ProxyKiller\packages.config",
+            "ConstantKiller\packages.config"
+        )
+        foreach ($packagesFile in $packagesFiles) {
+            if (Test-Path $packagesFile) {
+                $content = Get-Content $packagesFile
+                $content = $content -replace 'targetFramework="net35"', 'targetFramework="net45"'
+                Set-Content $packagesFile -Value $content
+            }
         }
 
     - name: Restore dependencies
