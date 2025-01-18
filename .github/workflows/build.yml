@@ -53,15 +53,18 @@ jobs:
                 Set-Content $packagesFile -Value $content
             }
         }
+    
+    - name: Clean build output
+      run: dotnet clean ConfuserExTools.sln
 
     - name: Restore dependencies
       run: dotnet restore ConfuserExTools.sln
 
     - name: Build
-      run: dotnet build ConfuserExTools.sln -c Release
+      run: dotnet build ConfuserExTools.sln -c Release -v detailed
 
     - name: Publish
-      run: dotnet publish ConfuserExTools.sln -c Release -r win-x64 --self-contained true -f net45 -o publish
+      run: dotnet publish ConfuserExTools.sln -c Release -r win-x64 --self-contained true -f net45 -o publish -v detailed
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
