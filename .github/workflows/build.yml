@@ -19,12 +19,19 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x' # 根据项目需要调整 .NET SDK 版本
+        dotnet-version: '6.0.400' # 使用更稳定的 .NET SDK 版本
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
       with:
         vs-version: 16.0 # Visual Studio 2019, which includes .NET Framework 4.5
+    
+    - name: Install .NET Framework 4.5 SDK
+      run: |
+        Start-Process -Wait -FilePath "https://download.microsoft.com/download/b/a/4/ba4a7e71-2996-499b-a91a-011086264719/netfx_dt_x64.exe" -ArgumentList "/q"
+    
+    - name: Clear NuGet cache
+      run: dotnet nuget locals all --clear
 
     - name: Modify project files
       run: |
@@ -57,11 +64,6 @@ jobs:
     - name: Clean build output
       run: dotnet clean ConfuserExTools.sln
 
-
-    - name: Install .NET Framework 4.5 Developer Pack
-      run: |
-        choco install netfx-4.5.2-devpack
-        
     - name: Restore dependencies
       run: dotnet restore ConfuserExTools.sln
 
