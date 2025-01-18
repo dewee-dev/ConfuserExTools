@@ -56,7 +56,15 @@ jobs:
     
     - name: Clean build output
       run: dotnet clean ConfuserExTools.sln
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '4.5.x'
 
+    - name: Install .NET Framework 4.5 Developer Pack
+      run: |
+        choco install netfx-4.5.2-devpack
+        
     - name: Restore dependencies
       run: dotnet restore ConfuserExTools.sln
 
