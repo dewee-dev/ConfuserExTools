@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ master ]
   workflow_dispatch:
-  
 jobs:
   build:
     runs-on: windows-latest
@@ -21,6 +20,19 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x' # 根据项目需要调整 .NET SDK 版本
+
+    - name: Modify project files
+      run: |
+        $projectFiles = @(
+          "ConfuserExTools/ConfuserExKiller/ConfuserExKiller.csproj",
+          "ConfuserExTools/ProxyKiller/ProxyKiller.csproj",
+          "ConfuserExTools/ConstantKiller/ConstantKiller.csproj"
+        )
+        foreach ($projectFile in $projectFiles) {
+          $content = Get-Content $projectFile
+          $content = $content -replace '<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>', '<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>'
+          Set-Content $projectFile -Value $content
+        }
 
     - name: Restore dependencies
       run: dotnet restore ConfuserExTools.sln
