@@ -24,9 +24,9 @@ jobs:
     - name: Modify project files
       run: |
         $projectFiles = @(
-          "ConfuserExTools/ConfuserExKiller/ConfuserExKiller.csproj",
-          "ConfuserExTools/ProxyKiller/ProxyKiller.csproj",
-          "ConfuserExTools/ConstantKiller/ConstantKiller.csproj"
+          "ConfuserExTools\ConfuserExKiller\ConfuserExKiller.csproj",
+          "ConfuserExTools\ProxyKiller\ProxyKiller.csproj",
+          "ConfuserExTools\ConstantKiller\ConstantKiller.csproj"
         )
         foreach ($projectFile in $projectFiles) {
           $content = Get-Content $projectFile
