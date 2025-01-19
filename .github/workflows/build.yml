@@ -16,16 +16,24 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.400' # 使用更稳定的 .NET SDK 版本
-    
+        dotnet-version: '6.0.400'
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: 16.0 # Visual Studio 2019, which includes .NET Framework 4.5
-    
+        vs-version: 16.0
+
     - name: Install .NET Framework 4.5 SDK
       run: |
         Start-Process -Wait -FilePath "https://download.microsoft.com/download/b/a/4/ba4a7e71-2996-499b-a91a-011086264719/netfx_dt_x64.exe" -ArgumentList "/q"
@@ -47,7 +55,7 @@ jobs:
           Set-Content $projectFile -Value $content
         }
         
-        # 检查并修改 packages.config 文件
+        # Check and modify packages.config files
         $packagesFiles = @(
             "ConfuserExKiller\packages.config",
             "ProxyKiller\packages.config",
@@ -77,4 +85,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ConfuserExTools-win-x64
-        path: publish 
+        path: publish
