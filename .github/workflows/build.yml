@@ -77,7 +77,7 @@ jobs:
       run: dotnet clean ConfuserExTools.sln
 
     - name: Restore dependencies
-      run: dotnet restore ConfuserExTools.sln
+      run: dotnet restore ConfuserExTools.sln --nuget-version 5.11.0
 
     - name: Build
       run: dotnet build ConfuserExTools.sln -c Release -v detailed /p:TargetFramework=net45 /p:UseSourceLink=false /m:1
