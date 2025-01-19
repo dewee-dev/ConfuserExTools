@@ -27,23 +27,64 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.400'
+        dotnet-version: '6.0.300'
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 16.0
 
     - name: Install .NET Framework 4.5 Developer Pack
+      run: choco install netfx-4.5.2-devpack -y
+
+    - name: Set MSBuild SDK Path
       run: |
-        choco install netfx-4.5.2-devpack -y
+        $msbuildPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5 Tools"
+        Write-Host "##vso[task.setvariable variable=MSBuildSDKsPath;]$msbuildPath"
 
     - name: Clear NuGet cache
       run: dotnet nuget locals all --clear
 
+    - name: Modify project files
+      run: |
+        $projectFiles = @(
+          "ConfuserExKiller\ConfuserExKiller.csproj",
+          "ProxyKiller\ProxyKiller.csproj",
+          "ConstantKiller\ConstantKiller.csproj"
+        )
+        foreach ($projectFile in $projectFiles) {
+          $content = Get-Content $projectFile
+          $content = $content -replace '<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>', '<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>'
+          $content = $content -replace '<TargetFramework>net35</TargetFramework>', '<TargetFramework>net45</TargetFramework>'
+          $content = $content -replace '<TargetFrameworks>net35</TargetFrameworks>', '<TargetFrameworks>net45</TargetFrameworks>'
+          Set-Content $projectFile -Value $content
+        }
+        
+        # Check and modify packages.config files
+        $packagesFiles = @(
+            "ConfuserExKiller\packages.config",
+            "ProxyKiller\packages.config",
+            "ConstantKiller\packages.config"
+        )
+        foreach ($packagesFile in $packagesFiles) {
+            if (Test-Path $packagesFile) {
+                $content = Get-Content $packagesFile
+                $content = $content -replace 'targetFramework="net35"', 'targetFramework="net45"'
+                Set-Content $packagesFile -Value $content
+            }
+        }
+    
     - name: Clean build output
-      run: dotnet clean ConfuserExTools.sln
+      run: |
+        dotnet clean ConfuserExTools.sln
+        Remove-Item -Path "**/bin" -Recurse -Force -ErrorAction Ignore
+        Remove-Item -Path "**/obj" -Recurse -Force -ErrorAction Ignore
 
     - name: Restore dependencies
-      run: dotnet restore ConfuserExTools.sln
+      run: dotnet restore ConfuserExTools.sln --version 5.11.0
 
     - name: Build
-      run: dotnet build ConfuserExTools.sln -c Release -v detailed
+      run: dotnet build ConfuserExTools.sln -c Release -v detailed /p:TargetFramework=net45 /p:UseSourceLink=false /m:1
 
     - name: Publish
       run: dotnet publish ConfuserExTools.sln -c Release -r win-x64 --self-contained true -f net45 -o publish -v detailed
