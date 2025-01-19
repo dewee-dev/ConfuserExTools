@@ -34,10 +34,7 @@ jobs:
       with:
         vs-version: 16.0
 
-    - name: Install .NET Framework 4.5 SDK
-      run: |
-        Start-Process -Wait -FilePath "https://download.microsoft.com/download/b/a/4/ba4a7e71-2996-499b-a91a-011086264719/netfx_dt_x64.exe" -ArgumentList "/q"
-    
+
     - name: Clear NuGet cache
       run: dotnet nuget locals all --clear
 
