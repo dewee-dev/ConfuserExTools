@@ -1,0 +1,33 @@
+name: Build on Windows
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x' # 将 '6.0.x' 替换为你需要的 .NET SDK 版本
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-build-artifacts
+        path: |
+          **/bin/Release/**/*.exe
+          **/bin/Release/**/*.dll 
