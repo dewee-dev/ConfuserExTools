@@ -27,7 +27,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.300'
+        dotnet-version: '6.0.400'
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
@@ -35,12 +35,8 @@ jobs:
         vs-version: 16.0
 
     - name: Install .NET Framework 4.5 Developer Pack
-      run: choco install netfx-4.5.2-devpack -y
-
-    - name: Set MSBuild SDK Path
       run: |
-        $msbuildPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5 Tools"
-        Write-Host "##vso[task.setvariable variable=MSBuildSDKsPath;]$msbuildPath"
+        choco install netfx-4.5.2-devpack -y
 
     - name: Clear NuGet cache
       run: dotnet nuget locals all --clear
@@ -74,16 +70,13 @@ jobs:
         }
     
     - name: Clean build output
-      run: |
-        dotnet clean ConfuserExTools.sln
-        Remove-Item -Path "**/bin" -Recurse -Force -ErrorAction Ignore
-        Remove-Item -Path "**/obj" -Recurse -Force -ErrorAction Ignore
+      run: dotnet clean ConfuserExTools.sln
 
     - name: Restore dependencies
-      run: dotnet restore ConfuserExTools.sln --version 5.11.0
+      run: dotnet restore ConfuserExTools.sln
 
     - name: Build
-      run: dotnet build ConfuserExTools.sln -c Release -v detailed /p:TargetFramework=net45 /p:UseSourceLink=false /m:1
+      run: dotnet build ConfuserExTools.sln -c Release -v detailed
 
     - name: Publish
       run: dotnet publish ConfuserExTools.sln -c Release -r win-x64 --self-contained true -f net45 -o publish -v detailed
