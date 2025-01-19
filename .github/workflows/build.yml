@@ -81,7 +81,7 @@ jobs:
         Remove-Item -Path "**/obj" -Recurse -Force -ErrorAction Ignore
 
     - name: Restore dependencies
-      run: dotnet restore ConfuserExTools.sln --version 5.11.0
+      run: dotnet restore --version 5.11.0 ConfuserExTools.sln
 
     - name: Build
       run: dotnet build ConfuserExTools.sln -c Release -v detailed /p:TargetFramework=net45 /p:UseSourceLink=false /m:1
