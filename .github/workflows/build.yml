@@ -35,8 +35,12 @@ jobs:
         vs-version: 16.0
 
     - name: Install .NET Framework 4.5 Developer Pack
+      run: choco install netfx-4.5.2-devpack -y
+
+    - name: Set MSBuild SDK Path
       run: |
-        choco install netfx-4.5.2-devpack -y
+        $msbuildPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5 Tools"
+        Write-Host "##vso[task.setvariable variable=MSBuildSDKsPath;]$msbuildPath"
 
     - name: Clear NuGet cache
       run: dotnet nuget locals all --clear
